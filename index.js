@@ -7,9 +7,9 @@ const apiClient = require('./ApiClient')
 const fs = require('fs');
 const path = require('path')
 
-app.use(morgan('tiny'))
-app.use(morgan('dev',{
-    stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+app.use(morgan('dev'))
+app.use(morgan('dev', {
+    stream: fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'})
 
 }));
 
@@ -24,10 +24,10 @@ app.get('/', (req, res) => {
 });
 
 app.post('/webhook', (req, res) => {
-    const {event, payload} = req.body;
-    fs.appendFile("output.json", JSON.stringify(req.body), 'utf8', function (err) {
+    const {event} = req.body;
+    fs.appendFile("output.json", JSON.stringify(event), 'utf8', function (err) {
         if (err) {
-            console.log("An error occured while writing JSON Object to File.");
+            console.log("An error occurred while writing JSON Object to File.");
             return console.log(err);
         }
 
@@ -90,9 +90,18 @@ app.get('/meetings', async (req, res) => {
     res.json(response)
 })
 
+
 app.get('/meeting/:meetingId', async (req, res) => {
-    console.log('body', req.body)
-    // const response = await apiClient.getMeetingInfo()
+    const meetingId = req.params.meetingId
+    const response = await apiClient.getMeetingInfo({
+        meetingID: meetingId
+    })
+    res.json(response)
+})
+
+app.post('/end-meeting', async (req, res) => {
+    const response = await apiClient.endMeeting(req.body)
+    res.json(response)
 })
 
 app.get('/webhooks', async (req, res) => {

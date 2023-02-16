@@ -68,7 +68,6 @@ class BigBlueButtonApiClient {
 
     async joinMeeting(params) {
         params.redirect = 'false'
-        console.log('join meeting params', params)
         return this.makeApiCall('join', params);
     }
 
